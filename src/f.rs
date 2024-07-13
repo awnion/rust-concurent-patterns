@@ -95,6 +95,40 @@ pub fn crossbeam_unbounded() {
     println!("Time elapsed: {:?}", start.elapsed());
 }
 
+pub fn kanal_unbounded() {
+    let start = std::time::Instant::now();
+
+    let (tx, rx) = kanal::unbounded::<bool>();
+    let mut counter = 0usize;
+
+    thread::scope(|s| {
+        let counter = &mut counter;
+        s.spawn(move || {
+            while rx.recv().unwrap() {
+                *counter += 1;
+            }
+        });
+        let mut pool = Vec::new();
+        for _ in 0..THREADS {
+            let tx = tx.clone();
+            pool.push(s.spawn(move || {
+                for _ in 0..MESSAGES {
+                    let _ = tx.send(true);
+                }
+            }));
+        }
+
+        for t in pool {
+            t.join().unwrap();
+        }
+
+        while let Err(_) = tx.send(false) {}
+    });
+
+    println!("Counter: {}", counter);
+    println!("Time elapsed: {:?}", start.elapsed());
+}
+
 pub async fn async_std_sync_mpsc_channel() {
     let start = std::time::Instant::now();
 
