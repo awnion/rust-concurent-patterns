@@ -3,6 +3,7 @@ use std::thread::sleep;
 
 use rust_concurent_patterns::f::arc_atomic_counter;
 use rust_concurent_patterns::f::async_crossbeam_unbounded;
+use rust_concurent_patterns::f::async_kanal_unbounded;
 use rust_concurent_patterns::f::async_std_sync_mpsc_channel;
 use rust_concurent_patterns::f::crossbeam_unbounded;
 use rust_concurent_patterns::f::kanal_unbounded;
@@ -44,6 +45,13 @@ async fn main() -> anyhow::Result<()> {
 
     println!("{}", type_name_of_val(&async_crossbeam_unbounded));
     async_crossbeam_unbounded().await;
+
+    println!("------------");
+    sleep(std::time::Duration::from_secs(1));
+    println!("------------");
+
+    println!("{}", type_name_of_val(&async_kanal_unbounded));
+    async_kanal_unbounded().await;
 
     println!("------------");
     sleep(std::time::Duration::from_secs(1));
