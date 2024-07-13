@@ -1,13 +1,12 @@
-use std::any::type_name_of_val;
 use std::sync::atomic::AtomicUsize;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
 use std::thread;
 
-const THREADS: usize = 10;
-const MESSAGES: usize = 100_000;
+const THREADS: usize = 20;
+const MESSAGES: usize = 1000_000;
 
-pub fn fn1() {
+pub fn arc_atomic_counter() {
     let start = std::time::Instant::now();
     let counter = Arc::new(AtomicUsize::new(0));
 
@@ -21,12 +20,12 @@ pub fn fn1() {
             });
         }
     });
-    println!("Arc {}", type_name_of_val(&counter));
+
     println!("Counter: {}", counter.load(Ordering::SeqCst));
     println!("Time elapsed: {:?}", start.elapsed());
 }
 
-pub fn fn2() {
+pub fn std_sync_mpsc_channel() {
     let start = std::time::Instant::now();
 
     let (tx, rx) = std::sync::mpsc::channel::<bool>();
@@ -60,7 +59,7 @@ pub fn fn2() {
     println!("Time elapsed: {:?}", start.elapsed());
 }
 
-pub fn fn3() {
+pub fn crossbeam_unbounded() {
     let start = std::time::Instant::now();
 
     let (tx, rx) = crossbeam_channel::unbounded::<bool>();
