@@ -10,8 +10,8 @@ const MESSAGES: usize = 1000_000;
 
 pub fn arc_atomic_counter() {
     let start = std::time::Instant::now();
-    let counter = Arc::new(AtomicUsize::new(0));
 
+    let counter = Arc::new(AtomicUsize::new(0));
     thread::scope(|s| {
         for _ in 0..THREADS {
             let counter = counter.clone();
@@ -22,6 +22,27 @@ pub fn arc_atomic_counter() {
             });
         }
     });
+
+    println!("Counter: {}", counter.load(Ordering::SeqCst));
+    println!("Time elapsed: {:?}", start.elapsed());
+}
+
+pub async fn async_arc_atomic_counter() {
+    let start = std::time::Instant::now();
+    let counter = Arc::new(AtomicUsize::new(0));
+
+    let mut v = Vec::new();
+    for _ in 0..THREADS {
+        let counter = counter.clone();
+        v.push(tokio::spawn(async move {
+            for _ in 0..MESSAGES {
+                counter.fetch_add(1, Ordering::SeqCst);
+            }
+        }));
+    }
+    for t in v {
+        let _ = t.await;
+    }
 
     println!("Counter: {}", counter.load(Ordering::SeqCst));
     println!("Time elapsed: {:?}", start.elapsed());
