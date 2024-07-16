@@ -41,8 +41,8 @@ func atomic_counter() {
 	fmt.Println("Time taken:", time.Since(start))
 }
 
-func chennal_counter() {
-	fmt.Println("Chennal")
+func channal_counter() {
+	fmt.Println("Channal")
 	start := time.Now()
 
 	ch := make(chan bool, 5000)
