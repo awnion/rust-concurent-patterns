@@ -11,7 +11,7 @@ const THREADS = 20
 const MESSAGES = 1000000
 
 func main() {
-	chennal_counter()
+	channal_counter()
 	time.Sleep(time.Second * 2)
 	atomic_counter()
 }
