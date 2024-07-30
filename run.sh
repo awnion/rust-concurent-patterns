@@ -3,8 +3,7 @@
 set -xe
 
 (set +x; echo "GO=========================")
-# go run golang/main.go
-./golang/main
+go run golang/main.go
 
 sleep 1
 

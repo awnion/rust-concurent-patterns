@@ -257,3 +257,39 @@ pub async fn async_kanal_unbounded() {
     println!("Counter: {}", counter);
     println!("Time elapsed: {:?}", start.elapsed());
 }
+
+pub async fn async_tokio_channel() {
+    let start = std::time::Instant::now();
+
+    let (tx, mut rx) = tokio::sync::mpsc::channel(5000);
+    let (counter_tx, counter_rx) = oneshot::channel();
+
+    tokio::spawn(async move {
+        let mut counter = 0usize;
+        while rx.recv().await.unwrap() {
+            counter += 1;
+        }
+        counter_tx.send(counter).unwrap();
+    });
+
+    let mut pool = Vec::new();
+    for _ in 0..THREADS {
+        let tx = tx.clone();
+        pool.push(tokio::spawn(async move {
+            for _ in 0..MESSAGES {
+                let _ = tx.send(true).await;
+            }
+        }));
+    }
+
+    for t in pool {
+        let _ = t.await;
+    }
+
+    while let Err(_) = tx.send(false).await {}
+
+    let counter = counter_rx.await.unwrap();
+
+    println!("Counter: {}", counter);
+    println!("Time elapsed: {:?}", start.elapsed());
+}
