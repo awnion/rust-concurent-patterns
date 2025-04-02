@@ -4,6 +4,7 @@ include = ["**/*.toml"]
 reorder_arrays = false
 # Once it will be fixed in taplo
 indent_string = "    "
+column_width = 80
 
 [[rule]]
 include = ["**/Cargo.toml"]
@@ -12,8 +13,7 @@ formatting.inline_table_expand = false
 [[rule]]
 include = ["**/Cargo.toml"]
 keys = ["dependencies", "*-dependencies", "workspace.dependencies"]
-[rule.formatting]
-reorder_keys = true
+formatting.reorder_keys = true
 
 [[rule]]
 include = ["Cargo.toml"]
